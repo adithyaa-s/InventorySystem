@@ -1,0 +1,119 @@
+import mysql.connector
+
+conn = mysql.connector.connect(host="localhost", user="<user>", passwd="<pass>", database='new')
+c1 = conn.cursor()
+
+count = <no of authentication tries>
+op = "y"
+
+while (count >= 1):
+    user = input("enter username: ")
+    passwd = input("enter password: ")
+    
+    if user == '<username>' and passwd == '<password>':
+        print(" ----------- PRODUCT CATALOGUE ------------")
+        
+        while op == "y":
+            print("\n1: ENTER PRODUCT DETAILS")
+            print("\n2: RETRIEVE ONE PRODUCT DETAIL")
+            print("\n3: RETRIEVE ALL PRODUCT DETAILS")
+            print("\n4: REMOVE PRODUCT DETAILS")
+            print("\n5: EDIT PRODUCT DETAILS")
+            
+            v_choice = int(input("Enter your choice: "))
+            
+            if v_choice == 1:
+                brand = input("Enter the brand name: ")
+                model = input("Enter the model name: ")
+                code = input("Enter the product code: ")
+                qty = input("Enter the qty number: ")
+                address = input("Enter the address of storage: ")
+                price = input("Enter the price: ")
+                
+                c1.execute("insert into gadgets_log values('" + brand + "','" + model + "'," + code + "," + qty + ",'" + address + "'," + price + ")")
+                conn.commit()
+                print("The record has been added")
+                
+            elif v_choice == 2:
+                v_code = input("Enter the product code: ")
+                c1.execute("select * from gadgets_log where code =" + v_code)
+                data = c1.fetchall()
+                print("Brand Name:", data[0][0])
+                print("Model:", data[0][1])
+                print("Product Code:", data[0][2])
+                print("Qty Number:", data[0][3])
+                print("Storage Address:", data[0][4])
+                print("Price:", data[0][5])
+                
+            elif v_choice == 3:
+                c1.execute("select * from gadgets_log")
+                data = c1.fetchall()
+                print(data)
+                
+            elif v_choice == 4:
+                delcode = input("Enter the product code: ")
+                c1.execute("delete from gadgets_log where code=" + delcode)
+                conn.commit()
+                print("The following record has been removed")
+                
+            elif v_choice == 5:
+                delcode = input("Enter the product code: ")
+                print("1-brand,2-model,4-qty,5-address,6-price")
+                ch = int(input("Which value would you like to change: "))
+                
+                if ch == 1:
+                    newbrand = input("Enter the new brand name: ")
+                    c = ("update gadgets_log set brand=%s where code=%s")
+                    val1 = (newbrand, delcode)
+                    c1.execute(c, val1)
+                    conn.commit()
+                    print("Records have been updated")
+                    
+                elif ch == 2:
+                    newmodel = input("Enter the new model name: ")
+                    c = ("update gadgets_log set model=%s where code=%s")
+                    val1 = (newmodel, delcode)
+                    c1.execute(c, val1)
+                    conn.commit()
+                    print("Records have been updated")
+                    
+                elif ch == 4:
+                    newqty = input("Enter the new qty number: ")
+                    c = ("update gadgets_log set qty=%s where code=%s")
+                    val1 = (newqty, delcode)
+                    c1.execute(c, val1)
+                    conn.commit()
+                    print("Records have been updated")
+                    
+                elif ch == 5:
+                    newadd = input("Enter the new address: ")
+                    c = ("update gadgets_log set address=%s where code=%s")
+                    val1 = (newadd, delcode)
+                    c1.execute(c, val1)
+                    conn.commit()
+                    print("Records have been updated")
+                    
+                elif ch == 6:
+                    newpri = input("Enter the new price: ")
+                    c = ("update gadgets_log set price=%s where code=%s")
+                    val1 = (newpri, delcode)
+                    c1.execute(c, val1)
+                    conn.commit()
+                    print("Records have been updated")
+                    
+                else:
+                    break
+                    
+            op = input("Would you like to continue (y/n): ")
+            count = 0
+            
+        else:
+            break
+            
+    elif (count <= 1):
+        print("You have failed 3 attempts to login. Please wait and try again")
+        break
+        
+    else:
+        count = count - 1
+        print("Incorrect credentials. you have ", count, "more attempt(s). please try again!!")
